@@ -92,11 +92,16 @@ class ZooplaSearch:
         search_radius = self.driver.find_element(By.XPATH,
                                                  "/html/body/div[3]/main/div/div/div/div[2]/div[2]/div[1]/div[2]/div/div/button")
         search_radius.click()
+        WebDriverWait(self.driver, 20).until(
+            EC.element_to_be_clickable(
+                (By.XPATH, f'/html/body/div[3]/main/div/div/div/div[2]/div[2]/div[1]/div[2]/div/div/ul/li[{search_radius_str}]')
+            )
+        )
         radius_to_click = self.driver.find_element(By.XPATH, f'/html/body/div[3]/main/div/div/div/div[2]/div[2]/div[1]/div[2]/div/div/ul/li[{search_radius_str}]')
-        if radius_to_click:
+        try:
             radius_to_click.click()
-        else:
-            print("Search radius not found")
+        except NoSuchElementException:
+            raise InvalidTagError("Cannot find such an element")
 
     def input_num_bedrooms(self):
         num_bedroom_str = str(input_data["min_num_bedroom"])
