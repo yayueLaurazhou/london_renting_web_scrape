@@ -32,13 +32,13 @@ input_data = {
 
 
 search_radius_selector = {
-    '0': 'item-0',
-    '0.25': 'item-1',
-    '0.5': 'item-2',
-    '1': 'item-3',
-    '3': 'item-4',
-    '5': 'item-5',
-    '10': 'item-6'
+    '0': '0',
+    '0.25': '1',
+    '0.5': '2',
+    '1': '3',
+    '3': '4',
+    '5': '5',
+    '10': '6'
 }
 
 
@@ -87,32 +87,16 @@ class ZooplaSearch:
 
     def input_search_radius(self):
         self.driver.maximize_window()
-        search_radius_str = str(input_data["search_radius_miles"])
-        select_search_radius = search_radius_selector[search_radius_str]
-
+        search_radius_str = search_radius_selector[str(input_data["search_radius_miles"])]
+        print(search_radius_str)
         search_radius = self.driver.find_element(By.XPATH,
                                                  "/html/body/div[3]/main/div/div/div/div[2]/div[2]/div[1]/div[2]/div/div/button")
         search_radius.click()
-
-        js_script = """
-                let searchText = arguments[0];
-                let main_content = document.querySelector("main");
-                let ul_element = main_content.querySelector('ul');
-                let li_elements = ul_element.getElementsByTagName('li');
-                for (let i = 0; i < li_elements.length; i++) {
-                    if (li_elements[i].id.includes(searchText)) {
-                        return li_elements[i];
-                    }
-                }
-                return null;
-                """
-
-        radius_to_click = self.driver.execute_script(js_script, select_search_radius)
+        radius_to_click = self.driver.find_element(By.XPATH, f'/html/body/div[3]/main/div/div/div/div[2]/div[2]/div[1]/div[2]/div/div/ul/li[{search_radius_str}]')
         if radius_to_click:
             radius_to_click.click()
         else:
             print("Search radius not found")
-
 
     def input_num_bedrooms(self):
         num_bedroom_str = str(input_data["min_num_bedroom"])
@@ -120,25 +104,13 @@ class ZooplaSearch:
         num_bedroom.click()
         min_num_bedroom = self.driver.find_element(By.XPATH,
                                                    "/html/body/div[3]/main/div/div/div/div[2]/div[2]/div[1]/div[3]/div/div/div[1]/div/button")
-        min_num_bedroom.click()
-        js_script = """
-                let searchText = arguments[0];
-                let main_content = document.querySelector("main");
-                let ul_element = main_content.getElementsByTagName('ul')[1];
-                let li_elements = ul_element.getElementsByTagName('li');
-                console.log(li_elements)
-                for (let i = 0; i < li_elements.length; i++) {
-                    if (li_elements[i].textContent.includes(searchText)) {
-                        return li_elements[i];
-                    }
-                }
-                return null;
-                """
-        num_bedroom_to_click = self.driver.execute_script(js_script, num_bedroom_str)
+
+
         if num_bedroom_to_click:
             num_bedroom_to_click.click()
         else:
             print("Min Number of bedrooms not found")
+
 
     def input_price(self):
         price = self.driver.find_element(By.CSS_SELECTOR, "button#select-group-price")
